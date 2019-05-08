@@ -1,9 +1,11 @@
 {
   "Customer": {
+		"port": 9100,
+		"aclPrefix": "express-skeleton-acl",
     "db": {
       "host": "localhost",
       "port": 27017,
-      "name": "express"
+      "name": "express-skeleton"
     }
   }
 }

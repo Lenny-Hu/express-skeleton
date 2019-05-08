@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-require('./userSchema');
+require('./user/schema');
+require('./syslog/schema');
 
 module.exports = {
   async connect (config) {
@@ -10,16 +11,16 @@ module.exports = {
     }
     uri += `${config.host}:${config.port}/${config.name}`;
 
-    let result = await mongoose.connect(uri, (error) => {
-      console.log(error ? '连接数据库失败' : '连接数据库成功')
-    })
-
-    let db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'mongodb connection error:'));
-    db.once('open', function() {
-      console.log('第一次打开')
-    });
-
-    return result
+    try {
+      let db = mongoose.connection;
+      db.on('error', console.error.bind(console, 'mongodb connection error:'));
+      db.on('open', function () {
+        console.log('打开数据库成功');
+      });
+      let result = await mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
+      return Promise.resolve(result);
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 }

@@ -2,26 +2,43 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+var log = require('morgan');
 const config = require('config');
-const db = require('./db');
+const Acl = require('acl');
 
+const db = require('./db');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var app = express();
+const logger = require('./logger');
 
-// 连接数据库
-const dbConfig = config.get('Customer.db');
+var app = express();
+console.log(0);
+
 (async () => {
-  await db.connect(dbConfig)
-})()
+  try {
+    // 连接数据库
+    let dbInstance = await db.connect(config.get('Customer.db'));
+    console.log(1);
+    // 权限控制
+    const acl = new Acl(new Acl.mongodbBackend(dbInstance, config.get('Customer.aclPrefix')));
+  } catch (error) {
+    console.log('连接数据库失败，将退出程序')
+    process.exit(0);
+  }
+  
+  console.log(2);
+  logger.emerg('emerg');
+  logger.warning('warning');
+  logger.error('error');
+
+})();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(logger('dev'));
+app.use(log('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
