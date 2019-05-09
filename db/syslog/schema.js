@@ -12,8 +12,22 @@ const syslogSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  rawoutput: String,
   clientIP: String,
   path: String,
+  timestamp: String,
+  file: String,
+  line: String,
+  pos: String,
+  method: String,
+  stack: String,
+  userAgent: String,
+  originalUrl: String,
+  reqMethod: {
+    type: String,
+    enum: ['GET', 'POST', 'DELETE', 'PUT']
+  },
+  reqParams: String,
   other: String,
   user: {
     type: Schema.Types.ObjectId,
@@ -21,6 +35,6 @@ const syslogSchema = new mongoose.Schema({
   }
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
-const SysLog = mongoose.model('log', syslogSchema);
+const SysLog = mongoose.model('syslog', syslogSchema);
 
 module.exports = SysLog;
